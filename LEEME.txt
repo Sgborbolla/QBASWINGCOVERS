@@ -51,7 +51,7 @@ QUÉ NO HACE
 No borra, no mueve y no sobrescribe ningún archivo tuyo.
 Solo escribe imágenes nuevas en Descargas\QBASWING COVERS,
 una por cada carpeta escaneada y con el nombre de esa carpeta.
-En tus discos y en tu teléfono no escribe nada.
+En tus discos no escribe nada.
 
 SI ALGO FALLA
 ────────────────────────────────────────────────────────────────

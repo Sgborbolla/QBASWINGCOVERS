@@ -9,7 +9,7 @@ SOLO LECTURA: comprueba que sigue en pie que:
      dibujo viejo. Ademas les crece el icono del tipo de contenido
      (pelicula, serie, anime...) en la esquina.
   2. Las unidades usan el icono de disco segun el tipo (local, extraible,
-     red, CD, telefono).
+     red, CD).
   3. La ruta de abajo no repite el nombre: muestra la ruta de verdad,
      reducida por el medio si es larga (seccion 9.5).
   4. La caratula real ocupa toda la portada de la tarjeta, y si no hay

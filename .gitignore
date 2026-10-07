@@ -11,6 +11,8 @@ __pycache__/
 # --- Datos y configuracion del programa: no van al repo ---
 config.json
 *.db
+*.db-shm
+*.db-wal
 *.log
 inventario.csv
 

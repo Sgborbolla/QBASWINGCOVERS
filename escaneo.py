@@ -15,11 +15,6 @@ import threading
 
 import rutas
 
-try:
-    import mtp
-except Exception:      # sin soporte MTP
-    mtp = None
-
 MIN_VIDEO_SIZE = 10 * 1024 * 1024         # 5.3 - 10 MB (lo pidio el usuario)
 PROFUNDIDAD_MAXIMA = 8                     # 5.6
 PROFUNDIDAD_BUSQUEDA_VIDEO = 3             # busca video hasta 3 niveles
@@ -62,29 +57,17 @@ TIPO_LOCAL = "local"
 TIPO_REMOVIBLE = "removible"
 TIPO_RED = "red"
 TIPO_CD = "cd"
-TIPO_PORTATIL = "portatil"
 
 DESCRIPCIONES = {
     TIPO_LOCAL: "Disco local",
     TIPO_REMOVIBLE: "Unidad extraible",
     TIPO_RED: "Unidad de red",
     TIPO_CD: "Unidad CD/DVD",
-    TIPO_PORTATIL: "Telefono o tablet (MTP)",
 }
 
 
 def _programa_dir():
     return str(rutas.base_dir())
-
-
-def es_mtp(ruta):
-    """True si la ruta apunta a un telefono o tablet (mtp://...)."""
-    if mtp is None or not ruta:
-        return False
-    try:
-        return bool(mtp.es_ruta_mtp(ruta))
-    except Exception:
-        return False
 
 
 def es_excluida(nombre):
@@ -199,38 +182,6 @@ def _unidades_fallback():
     return unidades
 
 
-def _unidades_portatiles():
-    """
-    Telefonos y tablets conectados por USB.
-
-    Windows no les asigna letra de unidad (por eso no aparecen en
-    Win32_LogicalDisk): se llegan a ver por MTP, con Shell.Application.
-    """
-    if mtp is None:
-        return []
-    try:
-        nombres = mtp.dispositivos()
-    except Exception:
-        return []
-
-    unidades = []
-    for nombre in nombres:
-        try:
-            raiz = mtp.unir(nombre, [])
-        except Exception:
-            continue
-        unidades.append({
-            "ruta": raiz,
-            "etiqueta": nombre,
-            "sistema": "MTP",
-            "tipo": TIPO_PORTATIL,
-            "descripcion": DESCRIPCIONES[TIPO_PORTATIL],
-            "total": 0,
-            "libre": 0,
-        })
-    return unidades
-
-
 def detectar_unidades():
     """4. Lista todas las unidades que ve la PC. Sin cantidades fijas."""
     if os.name == "nt":
@@ -272,7 +223,6 @@ def detectar_unidades():
                 except Exception:
                     pass
     unidades = [u for u in unidades if u.get("ruta")]
-    unidades.extend(_unidades_portatiles())
     return unidades
 
 
@@ -284,7 +234,7 @@ def es_interna(unidad):
 def es_seleccionable(unidad):
     """
     4. Se ofrecen para escanear TODAS las unidades que ve la PC:
-    internas, USB, discos externos, unidades de red, telefonos y tablets.
+    internas, USB, discos externos y unidades de red.
     """
     return bool(unidad.get("ruta"))
 
@@ -508,9 +458,6 @@ def escanear_unidad(ruta_unidad, progreso=None, control=None, marcador=None):
     la candidata es esa subcarpeta: el poster se escribe siempre en la
     carpeta donde esta el video.
 
-    Un telefono o tablet (mtp://) se recorre con el metodo MTP, porque
-    Windows no le asigna letra de unidad.
-
     control  : objeto Control. Permite pausar, seguir, detener y cancelar.
     marcador : objeto con .marcar(ruta) y .ya_visto(ruta). Permite no
                volver a revisar las carpetas que ya se miraon, para que un
@@ -519,18 +466,6 @@ def escanear_unidad(ruta_unidad, progreso=None, control=None, marcador=None):
     Si se detiene o se cancela, devuelve las candidatas que lleva hasta ese
     momento y no se pierde nada.
     """
-    if es_mtp(ruta_unidad):
-        fn = _control_progreso(control, marcador, progreso)
-        try:
-            # El control se le pasa tambien al proceso de PowerShell, para
-            # que pausar, detener y cancelar corten el recorrido del
-            # telefono en el momento y no cuando acabe solo.
-            return mtp.escanear(ruta_unidad, progreso=fn, control=control)
-        except Detenido:
-            return []
-        except Exception:
-            return []
-
     encontradas = []
     raiz_propia = os.path.normcase(_programa_dir())
     fn = _control_progreso(control, marcador, progreso)
@@ -685,8 +620,8 @@ class Control(object):
             return self.es_seguro()
         return self.es_seguro()
 
-    # Dos nombres para lo mismo. El recorrido llama a espera() y el
-    # telefono llama a esperar(); si falta uno, la pausa revienta con
+    # Dos nombres para lo mismo. El recorrido llama a espera() o a
+    # esperar(); si falta uno, la pausa revienta con
     # AttributeError y el escaneo se corta solo, que era el fallo.
     def espera(self, timeout_max=86400):
         return self.esperar(timeout_max)

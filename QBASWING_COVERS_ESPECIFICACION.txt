@@ -37,7 +37,7 @@ Que NO cambia con el idioma:
 ESTRUCTURA DE ARCHIVOS
 
     qbaswing_covers.py    Programa principal
-    i18n.py                Diccionario de traducciones (172 claves, ES / EN)
+    i18n.py                Diccionario de traducciones (171 claves, ES / EN)
     config.json            Ajustes, idioma elegido y clave de API
     qbawing_covers.log     Registro de actividad
     inventario.csv         Tabla de la coleccion
@@ -259,7 +259,7 @@ animado o telenovela que aun no tenga imagen.
 No borra nada. No renombra nada. No sobrescribe nada. Solo escribe archivos
 nuevos en tu carpeta de Descargas\QBASWING COVERS, uno por cada carpeta
 escaneada que no tenga ninguna imagen, y con el mismo nombre que la carpeta.
-En tus discos y en tu telefono no escribe nada.
+En tus discos no escribe nada.
 
 
 ================================================================================
@@ -737,7 +737,7 @@ Cada descarga:
     - si ya estaba descargada, lo reporta y lo salta
     - si el archivo descargado pesa menos de 15 KB, lo considera fallido
       y borra el parcial, marcando la carpeta para revision
-    - NUNCA escribe en tus discos ni en tu telefono
+    - NUNCA escribe en tus discos
     - NUNCA sobrescribe ni borra nada existente
 
 9.9 AL TERMINAR
@@ -870,7 +870,7 @@ Carpeta QBASWING-COVERS:
 
     iniciar.bat              Doble clic aqui para arrancar
     qbaswing_covers.py       Programa principal
-    i18n.py                   Diccionario ES / EN (172 claves)
+    i18n.py                   Diccionario ES / EN (171 claves)
     config.json               Ajustes y clave de TMDB (ya viene escrita)
     logo-qbaswing.png         Tu logo (opcional, si no esta funciona igual)
     ACERCA_DE_NOSOTROS.txt    La historia, en texto plano
@@ -1012,7 +1012,7 @@ En la galeria web:
     Unicamente archivos de imagen NUEVOS dentro de
     Descargas\QBASWING COVERS, uno por cada carpeta escaneada
     que no tenga ninguna imagen y con el nombre de esa carpeta.
-    En tus discos y en tu telefono no escribe nada.
+    En tus discos no escribe nada.
 
 15.3 PARA DETENER TODO
 ----------------------

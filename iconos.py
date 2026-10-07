@@ -171,32 +171,11 @@ def disco_cd(extra=""):
         ' opacity=".45"/>', extra)
 
 
-def telefono(extra=""):
-    return _envoltura(
-        '<rect x="30" y="8" width="36" height="68" rx="8" fill="#F7F9FC"'
-        ' stroke="#2E6FD8" stroke-width="3"/>'
-        '<rect x="35" y="18" width="26" height="42" rx="2" fill="#DCEBFF"/>'
-        '<circle cx="48" cy="67" r="4" fill="#5B9BEB"/>'
-        '<rect x="43" y="12" width="10" height="3" rx="1.5" fill="#9AA0A8"/>'
-        '<path d="M40 36l6 6-6 6M56 36l-6 6 6 6" stroke="#2E6FD8"'
-        ' stroke-width="2.5" fill="none" stroke-linecap="round"'
-        ' stroke-linejoin="round"/>', extra)
-
-
-def tablet(extra=""):
-    return _envoltura(
-        '<rect x="24" y="10" width="48" height="64" rx="7" fill="#F7F9FC"'
-        ' stroke="#2E6FD8" stroke-width="3"/>'
-        '<rect x="29" y="19" width="38" height="44" rx="2" fill="#DCEBFF"/>'
-        '<circle cx="48" cy="68" r="3" fill="#5B9BEB"/>', extra)
-
-
 DISPOSITIVOS = {
     "local": disco_local,
     "removible": disco_extraible,
     "red": disco_red,
     "cd": disco_cd,
-    "portatil": telefono,
 }
 
 
@@ -205,10 +184,6 @@ def por_dispositivo(tipo, extra=""):
     if fn:
         return fn(extra)
     return disco_local(extra)
-
-
-def telefono_o_tablet(extra=""):
-    return telefono(extra)
 
 
 # --------------------------------------------------------------------------

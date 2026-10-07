@@ -26,10 +26,6 @@ from urllib.parse import urlparse, parse_qs
 
 import escaneo
 
-try:
-    import mtp
-except Exception:
-    mtp = None
 import fuentes
 import posters as post
 import rutas
@@ -553,7 +549,7 @@ def ventana_discos(lang, unidades):
     filas = []
     for i, u in enumerate(unidades, 1):
         interna = escaneo.es_interna(u)
-        # Todas las unidades se ofrecen: internas, USB, externas y telefonos.
+        # Todas las unidades se ofrecen: internas, USB y externas.
         marcado = " checked"
         filas.append(
             "<tr>"
@@ -627,7 +623,6 @@ def ventana_escaneo(lang, unidades_elegidas):
         '    <button class="btn chico fantasma" onclick="ctl(\'cancelar\')">%s</button>'
         '  </div>'
         '  <p class="lead" style="margin-top:1.4rem">%s</p>'
-        '  <p class="lead aviso-fino">%s</p>'
         '</div>'
         '<script>const RUTAS=[%s];</script>'
         % (esc(t("titulo_escaneo", lang)),
@@ -638,7 +633,6 @@ def ventana_escaneo(lang, unidades_elegidas):
            esc(t("btn_detener", lang)),
            esc(t("btn_cancelar", lang)),
            esc(t("msg_escaneo_tiempo", lang)),
-           esc(t("aviso_telefono_lento", lang)),
            rutas_js)
     )
 
@@ -646,7 +640,7 @@ def ventana_escaneo(lang, unidades_elegidas):
 function ctl(accion){
   fetch('/api/controlar?accion='+accion).catch(function(){});
 }
-/* Una linea de progreso por unidad: asi se ve C: y el telefono a la vez. */
+/* Una linea de progreso por unidad: asi se ve cada disco por separado. */
 function pintarDetalle(d){
   var caja=document.getElementById('lineas');
   if(!d.detalle || !d.detalle.length){ caja.innerHTML=''; return; }
@@ -832,29 +826,6 @@ def _mirar_subcarpeta(ruta):
 
 def listar_subdirectorios(ruta_actual):
     """Lee la carpeta y devuelve las subcarpetas reales de la ruta."""
-    # Telefono o tablet: se listan por MTP, no hay letra de unidad.
-    if escaneo.es_mtp(ruta_actual):
-        salida = []
-        indice = _indice_carpetas()
-        try:
-            encontradas = mtp.listar_subcarpetas(ruta_actual)
-        except Exception:
-            encontradas = []
-        for s in encontradas:
-            escaneada = indice.get(s["ruta"]) or {}
-            salida.append({
-                "ruta": s["ruta"],
-                "nombre": s["nombre"],
-                "hijos": s.get("hijos", 0),
-                "id": E.id_de(s["ruta"]),
-                "estado": _estado_de_carpeta(s["ruta"]),
-                "tipo": escaneada.get("tipo"),
-                # En MTP solo se consulta el telefono si el escaneo ya
-                # lo visito, para no lanzar PowerShell por cada carpeta.
-                "tiene_imagen": bool(escaneada.get("ya_tiene")),
-            })
-        return salida
-
     try:
         entradas = sorted(os.scandir(ruta_actual), key=lambda e: e.name.lower())
     except Exception:
@@ -889,18 +860,6 @@ def listar_subdirectorios(ruta_actual):
 def _unidad_de_ruta(ruta, unidades):
     if not ruta:
         return None
-
-    # Telefonos: se comparan por prefijo mtp://<dispositivo>
-    if escaneo.es_mtp(ruta):
-        destino = str(ruta).lower().rstrip("/")
-        mejor = None
-        for unidad in unidades or []:
-            raiz = str(unidad or "").lower().rstrip("/")
-            if not raiz or not destino.startswith(raiz):
-                continue
-            if mejor is None or len(raiz) > len(mejor):
-                mejor = unidad
-        return mejor
 
     try:
         candidata = os.path.normcase(os.path.abspath(ruta))
@@ -949,8 +908,6 @@ def _filtrar(items, lang, filtro, orden, texto):
 def _dispositivo_de(ruta):
     """Clave que iconos.py entiende para cada unidad."""
     try:
-        if escaneo.es_mtp(ruta):
-            return "portatil"
         tipo = (escaneo._unidades_wmi().get(
             os.path.abspath(ruta), {}) or {}).get("tipo") or ""
     except Exception:
@@ -1652,12 +1609,6 @@ def _ya_descargada(ruta):
         carpeta = _carpeta_descargas(crear=False)
         if os.path.isfile(os.path.join(carpeta, archivo)):
             return True
-    if escaneo.es_mtp(ruta):
-        try:
-            est = mtp.estado_carpeta(ruta) or {}
-            return bool(est.get("cover"))
-        except Exception:
-            return False
     try:
         return os.path.isfile(os.path.join(ruta, COVER_NAME))
     except Exception:
@@ -1801,8 +1752,8 @@ def _hilo_busqueda():
 #
 # El poster NO se escribe en la carpeta del video: se guarda en
 #   Descargas\QBASWING COVERS\<nombre de la carpeta>.jpg
-# con -2, -3... si dos carpetas se llaman igual. En el origen (disco
-# o telefono) no se escribe NADA.
+# con -2, -3... si dos carpetas se llaman igual. En el origen
+# no se escribe NADA.
 # --------------------------------------------------------------------------
 
 _GENERICO_DESCARGA = re.compile(
@@ -1853,14 +1804,6 @@ def _carpeta_descargas(crear=True):
 
 def _padre_de(ruta):
     """Nombre de la carpeta padre, para nombrar carpetas genericas."""
-    if escaneo.es_mtp(ruta):
-        try:
-            _dispositivo, partes = mtp.partir(ruta)
-            if len(partes) >= 2:
-                return partes[-2]
-        except Exception:
-            pass
-        return ""
     try:
         return os.path.basename(os.path.dirname(ruta))
     except Exception:
@@ -1920,18 +1863,7 @@ def _descargar_una(c):
     ruta = c["ruta"]
 
     # 5.4 Si el origen ya tiene imagen, se respeta: no se descarga nada.
-    if escaneo.es_mtp(ruta):
-        try:
-            est = mtp.estado_carpeta(ruta) or {}
-        except Exception:
-            est = {}
-        if not est.get("carpeta"):
-            return "fallo", 0
-        if est.get("cover"):
-            return "ya_existe", 0
-        if est.get("imagenes"):
-            return "ya_tiene_imagen", 0
-    elif escaneo.tiene_imagen(ruta):
+    if escaneo.tiene_imagen(ruta):
         return "ya_tiene_imagen", 0
 
     destino = _destino_descarga(ruta, c.get("nombre") or "")
@@ -2055,15 +1987,6 @@ def _hilo_descarga(lista, motivo):
 
 def _abrir_carpeta(ruta):
     """Abre la carpeta en el explorador de Windows. Si no puede, no pasa nada."""
-    # En un telefono se abre el dispositivo, que es lo que Windows entiende.
-    if escaneo.es_mtp(ruta):
-        try:
-            import subprocess
-            dispositivo, _partes = mtp.partir(ruta)
-            subprocess.Popen(["explorer", mtp.unir(dispositivo, [])])
-        except Exception:
-            _log("No se pudo abrir el telefono: %s" % ruta, "ERROR")
-        return
     try:
         os.startfile(ruta)          # noqa: F821  (solo Windows)
     except Exception:

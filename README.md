@@ -6,8 +6,8 @@ anime, animado o telenovela para que toda la colección tenga carátula.
 
 **Regla de oro:** no borra, no mueve y no sobrescribe nada tuyo. Los pósters
 descargados se guardan en `Descargas\QBASWING COVERS\<nombre de la carpeta>.jpg`
-(con sufijo `-2`, `-3`… si dos carpetas se llaman igual). En tus discos y en
-tu teléfono no escribe nada.
+(con sufijo `-2`, `-3`… si dos carpetas se llaman igual). En tus discos
+no escribe nada.
 
 ## Uso
 
@@ -36,12 +36,11 @@ conectarse.
 | --- | --- |
 | `qbaswing_covers.py` | Punto de entrada; `--check` ejecuta el diagnóstico |
 | `servidor.py` | Servidor web local y todas las pantallas |
-| `escaneo.py` | Escaneo de discos y carpetas (con soporte MTP) |
+| `escaneo.py` | Escaneo de discos y carpetas |
 | `fuentes.py` | APIs: TMDB, AniList, TVmaze, Internet Archive |
 | `posters.py`, `iconos.py`, `fondo.py`, `estilos.py` | Imágenes e interfaz |
 | `base.py` | Base de datos SQLite del programa |
 | `i18n.py` | Textos ES/EN; se lee de disco, va junto al ejecutable |
-| `mtp.py` | Teléfonos y tabletas por MTP (solo lectura) |
 | `QBASWING_COVERS_ESPECIFICACION.txt` | Especificación completa (fuente de verdad) |
 | `LEEME.txt` | Manual rápido del usuario |
 | `pruebas/` | Batería de pruebas |

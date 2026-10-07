@@ -5,7 +5,7 @@ Diagnostico de RED (manual, NO va en la bateria):
 2) hace descargas de prueba REALES de peliculas, series, telenovelas
    y animes hasta Descargas\\QBASWING COVERS (el destino normal);
 3) verifica cada archivo: tamano >= 15 KB, imagen valida y carpeta de
-   origen intacta (ni un byte escrito en los discos ni en el telefono).
+   origen intacta (ni un byte escrito en los discos).
 
 Las descargas se dejan en la carpeta para revisarlas; con --borrar las
 borra el solo al terminar. La base de la prueba vive en %TEMP% y se

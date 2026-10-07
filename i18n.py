@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 """
 QBASWING COVERS - Traducciones ES/EN
-172 claves según especificación
+171 claves según especificación
 """
 
 I18N = {
     "portada_titulo_1": {"es": 'QBASWING COVERS', "en": 'QBASWING COVERS'},
     "portada_titulo_2": {"es": 'Cada coleccion merece su portada', "en": 'Every collection deserves its cover'},
-    "portada_sub": {"es": 'Escanea tus discos, tu telefono y tus unidades extraibles, y ponle el poster oficial a cada pelicula, serie, anime y telenovela que aun no lo tiene.', "en": 'Scans your disks, your phone and your removable drives, and puts the official cover on every movie, series, anime and telenovela that does not have one yet.'},
+    "portada_sub": {"es": 'Escanea tus discos y tus unidades extraibles, y ponle el poster oficial a cada pelicula, serie, anime y telenovela que aun no lo tiene.', "en": 'Scans your disks and your removable drives, and puts the official cover on every movie, series, anime and telenovela that does not have one yet.'},
     "btn_escanear_ya": {"es": 'EXPLORAR AHORA', "en": 'EXPLORE NOW'},
     "btn_seguir_escaneo": {"es": 'Continuar el escaneo anterior', "en": 'Continue the previous scan'},
     "portada_t1_titulo": {"es": 'Ve tus carpetas como el Explorador de Windows', "en": 'Your folders like Windows Explorer'},
     "portada_t1_texto": {"es": 'Iconos de carpeta reales, caratulas reales y navegacion con clic, sin escribir nada.', "en": 'Real folder icons, real covers and click navigation, without typing anything.'},
     "portada_t2_titulo": {"es": 'El poster va a tu carpeta de Descargas', "en": 'The cover goes to your Downloads folder'},
     "portada_t2_texto": {"es": 'Cada carpeta escaneada recibe su caratula en Descargas\\QBASWING COVERS, con el mismo nombre. No se toca ningun archivo tuyo.', "en": 'Every scanned folder gets its cover in Downloads\\QBASWING COVERS, with the same name. None of your files are touched.'},
-    "portada_t3_titulo": {"es": 'Discos, USB y telefono', "en": 'Disks, USB drives and phones'},
-    "portada_t3_texto": {"es": 'Ve los discos internos, los externos, las unidades de red y los celulares conectados por cable.', "en": 'See internal disks, external drives, network units and phones connected by cable.'},
+    "portada_t3_titulo": {"es": 'Discos y USB', "en": 'Disks and USB drives'},
+    "portada_t3_texto": {"es": 'Ve los discos internos, los externos y las unidades de red.', "en": 'See internal disks, external drives and network units.'},
     "portada_demo_titulo": {"es": 'Asi se ve tu coleccion', "en": 'This is how your collection looks'},
     "portada_demo_texto": {"es": 'Carga real de peliculas, series y animes.', "en": 'Real movie, series and anime artwork.'},
     "portada_cifra_carpetas": {"es": 'carpetas con video', "en": 'folders with video'},
@@ -30,7 +30,6 @@ I18N = {
     "btn_seguir": {"es": 'Continuar', "en": 'Resume'},
     "btn_detener": {"es": 'Detener', "en": 'Stop'},
     "btn_reanudar": {"es": 'Continuar el escaneo anterior', "en": 'Continue the previous scan'},
-    "aviso_telefono_lento": {"es": 'Los telefonos van mas lento que los discos. Si aparece algo raro, el telefono esta notifying: desconecta el cable y vuelve a conectarlo.', "en": 'Phones are slower than disks. If something odd appears, the phone is probably busy: unplug the cable and plug it back in.'},
     "btn_cerrar": {"es": 'Cerrar', "en": 'Close'},
     "btn_cerrar_ayuda": {"es": 'Cerrar el programa por completo, servidor incluido', "en": 'Close the whole program, server included'},
     "msg_cerrar_confirmar": {"es": '¿Cerrar QBASWING COVERS? Se apagara el servidor y la ventana del programa. Lo que ya descargaste se queda donde esta.', "en": 'Close QBASWING COVERS? The server and the program window will close. Everything you already downloaded stays where it is.'},

@@ -1,0 +1,18 @@
+# --- Compilacion con PyInstaller (los .spec si van al repo) ---
+build*/*
+!build*/*.spec
+dist*/*
+cache/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+
+# --- Datos y configuracion del programa: no van al repo ---
+config.json
+*.db
+*.log
+inventario.csv
+
+# --- Restos viejos ---
+*.bak

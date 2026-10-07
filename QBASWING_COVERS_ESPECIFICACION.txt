@@ -1,0 +1,1077 @@
+================================================================================
+                    QBASWING COVERS v1.0
+                  DOCUMENTO DE ESPECIFICACION COMPLETA
+================================================================================
+
+Fecha: 2 de octubre de 2026
+Estado: Especificacion cerrada, desarrollo en curso
+Autor: Qbaswing
+Plataforma: Windows 10 / Windows 11 (tambien funciona en 7, 8 y 8.1)
+Lenguaje: Python 3.6+
+Idiomas:  Espanol / Ingles (selector con clic, todo el programa)
+
+
+================================================================================
+0. i18n - IDIOMAS
+================================================================================
+
+El programa es bilingue. Todo el texto visible sale de un diccionario de
+traducciones y se cambia con un clic.
+
+Que cambia con el idioma:
+
+    - Todos los menus y mensajes
+    - Los titulos de cada paso
+    - Los nombres de las opciones
+    - TODA la galeria web: botones, filtros, estados y mensajes
+    - Los titulos de las ventanas del navegador
+    - Las columnas del archivo inventario.csv
+
+Que NO cambia con el idioma:
+
+    - Los nombres reales de tus carpetas
+    - El nombre del archivo que escribe (el de la carpeta escaneada,
+      siempre dentro de Descargas\QBASWING COVERS)
+    - Los titulos oficiales de las peliculas (vienen de las APIs)
+
+ESTRUCTURA DE ARCHIVOS
+
+    qbaswing_covers.py    Programa principal
+    i18n.py                Diccionario de traducciones (172 claves, ES / EN)
+    config.json            Ajustes, idioma elegido y clave de API
+    qbawing_covers.log     Registro de actividad
+    inventario.csv         Tabla de la coleccion
+    qbawing_covers.db      Estado de la sesion de galeria
+    cache/                 Respuestas de las APIs (30 dias)
+    logo-qbaswing.png      Tu logo (opcional)
+
+VENTAJA DE i18n.py COMO ARCHIVO APARTE
+    Si manana quieres corregir una palabra o agregar un termino, solo editas
+    i18n.py. No tocas el programa.
+
+    Cada entrada tiene las dos versiones:
+
+        "menu_tipos":  {"es": "Menu de tipos",  "en": "Content types"},
+        "btn_descarga": {"es": "Descargar",     "en": "Download"},
+
+    Y en el programa se usa asi:
+
+        print(t("menu_tipos"))
+
+    Si falta una clave o el archivo esta danado, el programa arranca igual
+    en espanol y registra el error en el log. Nunca se detiene.
+
+
+================================================================================
+0.1 TODO SE ELIGE CON EL MOUSE
+================================================================================
+
+NO se escribe nada. Ninguna pantalla pide teclear texto.
+
+En la GALERIA WEB (donde se trabaja) es todo con clic:
+
+    - Cambiar idioma        clic en [ ES | EN ]
+    - Elegir tipos          clic en las casillas
+    - Elegir discos         clic en las casillas
+    - Entrar a una carpeta  doble clic
+    - Volver atras          clic en [ Subir ]
+    - Marcar para descargar  clic en el boton ✓ de la tarjeta
+    - Alternativa             clic derecho en la tarjeta
+    - Descargar             clic en el boton
+
+En la TERMINAL, que solo muestra el progreso y los avisos, tampoco se
+escribe: se mueve con las flechas del teclado y se acepta con Enter.
+
+Donde se puede cambiar el idioma:
+
+    1. Menu de idioma al abrir el programa
+    2. Boton ES | EN en la esquina superior derecha de la galeria web
+    3. Atajo: tecla F2 en cualquier momento
+
+
+================================================================================
+0.2 VENTANAS QUE SE SUSTITUYEN
+================================================================================
+
+Cada pantalla es una ventana del navegador. Cuando aparece la siguiente,
+la anterior se cierra sola y la nueva toma su sitio en la MISMA pestana
+(location.replace): no se abren pestanas nuevas. El programa arranca en
+una ventana de navegador a todo el ancho y sin boton de pantalla
+completa, asi que no hace falta ningun boton para agrandarlo.
+
+    Ventana 1  Bienvenida
+               Tu logo, selector ES | EN, tipos que quieres buscar,
+               y el boton Continuar.
+
+    Ventana 2  Discos
+               Lista de las unidades con su espacio libre.
+               Casillas para marcar. Boton Escanear.
+
+    Ventana 3  Escaneo
+               Barra de progreso, carpetas revisadas, contadores.
+               Al terminar muestra el resultado.
+
+    Ventana 4  Galeria  (la ultima, se queda abierta)
+               Explorador estilo Netflix con todo el trabajo.
+
+El boton "Acerca de nosotros" esta disponible desde el inicio, en
+cualquier pantalla.
+
+Sobre "Acerca de nosotros":
+
+    Boton siempre visible en la esquina superior derecha.
+    Abre una ventana con la historia completa.
+    Tambien se puede abrir al arrancar el programa, desde la ventana
+    de bienvenida, con un boton en la esquina.
+
+    En Windows se puede fijar en la barra de tareas para tenerla a mano.
+
+
+================================================================================
+0.3 ACERCA DE NOSOTROS - LA HISTORIA
+================================================================================
+
+VENTANA
+
+    ════════════════════════════════════════════════════════════════
+                          ACERCA DE NOSOTROS
+    ════════════════════════════════════════════════════════════════
+
+    QBASWING COVERS v1.0
+    Convierte tu coleccion de audiovisuales en una vidriera profesional.
+
+    Un producto de QBASwing Designer
+
+    ───────────────────────────────────────────────────────────────
+                         NUESTRA HISTORIA
+    ───────────────────────────────────────────────────────────────
+
+    QBASWing nacio de un sueno: el sueno de un medico cubano que,
+    partiendo de poco, se proponia hacer grandes cosas.
+
+    Con recursos limitados, pero con una idea clara de hacia donde
+    iba, se empezo a construir lo que hoy es QBASwing. Sin atajos.
+    Sin pendientes. Sin conformarse con lo justo.
+
+    QBASWing Designer representa esa manera de hacer las cosas:
+    software pensado para el uso real, no para la demostracion. Cada
+    programa nace de una necesidad concreta, de alguien que la vivia,
+    y se construye hasta que resuelve el problema por completo.
+
+    Porque aqui no se trata de tecnologia por la tecnologia. Se trata
+    de que un negocio de grabacion tenga sus caratulas ordenadas, sus
+    contenidos de muestra bien presentados, y su tiempo dedicado a lo
+    que realmente importa: el trabajo de grabacion.
+
+    Con el apoyo y la colaboracion de Freeman y Diseños, quien
+    entendio la vision desde el primer momento y puso las herramientas
+    necesarias para que estas ideas pudieran hacerse realidad.
+
+    ───────────────────────────────────────────────────────────────
+                       POR QUE ESTE PROGRAMA
+    ───────────────────────────────────────────────────────────────
+
+    QBASWING COVERS nacio de una tarea real: antes, para mostrarle a
+    un cliente una muestra de una serie o una pelicula, habia que
+    buscarla a mano, una por una, en Google.
+
+    Ahora el programa recorre tus discos, encuentra cada carpeta con
+    video y descarga su poster oficial automaticamente. Las
+    colecciones se ven ordenadas, con caratulas reales, listas para
+    presentar.
+
+    ───────────────────────────────────────────────────────────────
+                      DISEÑO Y DESARROLLO
+    ───────────────────────────────────────────────────────────────
+
+    QBASwing Designer · Freeman y Diseños
+    Todos los derechos reservados © 2026
+
+    Este programa no modifica, no borra y no sobrescribe nada de tus
+    archivos. Solo escribe archivos nuevos.
+
+
+================================================================================
+0.4 MARCA DE AGUA Y PIE DE PAGINA
+================================================================================
+
+PIE DE PAGINA
+
+    Al FINAL de TODAS las ventanas web, a todo el ancho, calcado al pie
+    del QBASwing Marketplace. No es un texto suelto en una esquina: es un
+    pie de verdad, que se queda abajo aunque la pantalla tenga poco
+    contenido, y se ve en TODAS las pantallas, la portada incluida.
+
+    Por orden, de arriba abajo:
+
+        1. Franja de la bandera cubana: tres tiras (azul, blanco mas
+           alto y rojo). Decoracion pura: no enlaza ni informa.
+        2. Fondo azul marino #213145.
+        3. Nombre "QBASWING COVERS" en blanco, con una estrella dorada
+           delante y el nombre pintado con el degradado de la bandera
+           (azul claro, blanco y rojo recortado sobre el texto).
+        4. Creditos en dorado, con un icono delante de cada linea:
+               Patrocinado por Freeman
+               Diseñado por QBASwing Designer y Freeman y Diseños © 2026
+        5. Reserva legal:
+               © 2026 QBASWING COVERS. Todos los derechos reservados.
+        6. Aviso de TMDB, en letra pequena y apagada.
+
+    En la version en ingles las lineas 4 y 5 salen en ingles
+    ("Sponsored by", "Designed by", "All rights reserved"). Todos los
+    textos se tocan desde i18n.py, sin recompilar.
+
+ESTILO VISUAL (paleta oscura de QBASWING MY SERVER)
+
+    Fondo oscuro, no claro: el programa se ve como QBASwing MyServer.
+    Tipografia serif para los titulos, sans para el texto corrido.
+    Bordes redondeados y sombras suaves al levantar las tarjetas.
+    Letra pequena suavizada (antialiased) para que se lea sobre el fondo.
+
+    Colores:
+
+        Fondo             #0a0b12
+        Panel             #14161f
+        Tarjeta           #171a25
+        Borde             #262a3a
+        Dorado            #e3bb6d
+        Dorado apagado    #b08b4d
+        Dorado brillante  #f6d896
+        Rojo              #c1453a
+        Esmeralda         #4fd1a0
+        Zafiro            #6fb2ff
+        Texto             #f3efe6
+        Texto apagado     #b3b9c5
+        Texto suave       #a6adba
+        Texto tenue       #8d94a3
+
+    Tu logo se usa tal cual, sin modificar: logo-qbaswing.png
+
+
+================================================================================
+1. QUE HACE EL PROGRAMA
+================================================================================
+
+QBASWING COVERS recorre los discos de tu PC, encuentra todas las carpetas que
+contienen video y descarga el poster oficial de cada serie, pelicula, anime,
+animado o telenovela que aun no tenga imagen.
+
+No borra nada. No renombra nada. No sobrescribe nada. Solo escribe archivos
+nuevos en tu carpeta de Descargas\QBASWING COVERS, uno por cada carpeta
+escaneada que no tenga ninguna imagen, y con el mismo nombre que la carpeta.
+En tus discos y en tu telefono no escribe nada.
+
+
+================================================================================
+2. FLUJO COMPLETO DE EJECUCION
+================================================================================
+
+  PASO 1  Menu de tipos
+          Eliges que contenido buscar: series, peliculas, animes, telenovelas,
+          documentales, otros, o todos.
+          Tu eleccion define en que bases se buscara, no filtra carpetas.
+
+  PASO 2  Menu de discos
+          El programa lista todas las unidades que ve en tu PC.
+          Marca cuales son internas y cuales externas.
+          Tu eliges cuales escanear. No escanea nada sin tu permiso.
+
+  PASO 3  Escaneo
+          Recorre las carpetas de solo lectura.
+          Al terminar muestra cuantos videos encontro y cuantas carpetas
+          ya tienen poster.
+
+  PASO 4  Pregunta de busqueda
+          "Buscar posters en internet para las que faltan?"
+            s = Si, busca ahora (tarda unos minutos)
+            n = No, solo quiero revisar lo que ya tengo
+
+  PASO 5  Galeria web
+          Se abre tu navegador en http://localhost:8080
+          Explorador de carpetas estilo Netflix.
+
+  PASO 6  Descarga
+          Eliges en la galeria que descargar: todo, uno a uno, o
+          solo lo que marques.
+
+  PASO 7  Cierre
+          Resumen de lo hecho, inventario.csv, log, y abre el
+          Explorador de Windows o Total Commander.
+
+
+================================================================================
+3. PASO 1 - MENU DE TIPOS
+================================================================================
+
+Opciones que se muestran:
+
+   1  Series / Series de TV            Fuente: TMDB + TVmaze
+   2  Peliculas                       Fuente: TMDB
+   3  Animes / Mangas / Animados      Fuente: AniList + TMDB
+   4  Novelas (telenovelas)           Fuente: TMDB TV + TVmaze
+   5  Documentales                    Fuente: TMDB + TVmaze
+   6  Otros
+   A  Todos los tipos
+
+Puedes elegir varias: escribes "1,3" o "1 3" para series y animes.
+Si escribes "A" o "todos" busca en todas las bases.
+
+IMPORTANTE:
+Tu eleccion NO filtra que carpetas se escanean. Si eliges "solo peliculas",
+todas tus carpetas con video se escanean igual, pero solo se intenta buscar
+poster de pelicula en ellas.
+
+
+================================================================================
+4. PASO 2 - MENU DE DISCOS
+================================================================================
+
+El programa detecta todas las unidades de tu PC y las muestra asi:
+
+   #  Unidad   Espacio             Tipo                Interna
+   --------------------------------------------------------------------------
+    1  C:\     libre de 250 GB de 500 GB   Disco local      si
+    2  D:\     libre de 1.2 TB de 2 TB     Disco local      si
+    3  E:\     libre de 500 GB de 1 TB     Unidad extraible  no
+    4  F:\     libre de 2 TB de 4 TB       Unidad de red     no
+
+MARCA "Interna":
+   si  = Disco fijo del equipo (sistema, video, etc.) -> se ofrece escanear
+   no  = USB, SD, NAS, CD -> se omite por defecto
+
+El programa NO asume cantidades. Si tu PC tiene 3 discos muestra 3.
+Si tiene 2 muestra 2. Todo se calcula en el momento.
+
+Como elegir:
+   "1,2"      escanea C: y D:
+   "todos"    escanea todas las unidades, incluidas las externas
+   "ninguno"  cancela
+
+El escaneo es de SOLO LECTURA. No modifica ni borra nada durante esta fase.
+
+
+================================================================================
+5. PASO 3 - REGLAS DE ESCANEO
+================================================================================
+
+5.1 QUE ES UNA CARPETA CANDIDATA
+-------------------------------
+Cualquier carpeta que contenga al menos un archivo de video.
+
+NO se exige que el video se llame igual a la carpeta.
+Ejemplo real tuyo:
+
+    Series/Rosario Tijeras T1/
+        Rosario Tijeras S01E01.mkv
+        Rosario Tijeras S01E02.mkv
+        Rosario Tijeras S01E03.mkv
+
+Esta carpeta ES candidata aunque ninguno de los videos se llame
+"Rosario Tijeras T1".
+
+5.2 EXTENSIONES DE VIDEO ACEPTADAS
+----------------------------------
+    .mkv  .mp4   .avi  .mov  .wmv  .flv  .webm  .m4v
+    .mpg  .mpeg  .m2ts  .ts   .vob  .rmvb  .rm   .3gp
+    .divx .asf   .ogv  .f4v  .mts  .m2v   .dat
+
+5.3 FILTRO DE TAMANO MINIMO
+---------------------------
+Un video debe pesar 10 MB (10,485,760 bytes) o mas para contar.
+
+Los archivos menores de 10 MB se ignoran. Son placeholders vacios,
+archivos de prueba, samples o trailers cortos que no te sirven.
+
+5.4 REGLA DE "YA TIENE POSTER"
+-------------------------------
+Si la carpeta contiene CUALQUIER archivo de imagen, se marca como
+"ya tiene poster" y NO se descarga nada.
+
+Extensiones de imagen aceptadas:
+    .jpg .jpeg .png .webp .bmp .gif .tiff .tif .jfif
+
+IMPORTANTE - SUBCARPETAS:
+Las imagenes en subcarpetas TAMBIEN cuentan.
+Si tienes:
+
+    Peliculas/Matrix (1999)/Posters/matrix.jpg
+
+la carpeta "Matrix (1999)" se marca como ya tiene poster y se salta.
+
+El nombre de la imagen NO importa. No tiene que llamarse "cover.jpg".
+Puede llamarse "foto1.png", "captura.jpg", "cualquier cosa".
+
+5.5 CARPETAS QUE SE EXCLUYEN DEL ESCANEO
+-----------------------------------------
+    $RECYCLE.BIN          Papelera
+    System Volume Information
+    Windows               Carpeta del sistema
+    $Windows.~BT          Actualizaciones
+    Program Files         Software instalado
+    Program Files (x86)
+    ProgramData
+    AppData
+    Recovery              Particion de recuperacion
+    node_modules
+    .git .svn __pycache__ .cache
+    La carpeta donde vive el propio programa
+
+5.6 PROFUNDIDAD MAXIMA
+----------------------
+El escaneo baja hasta 8 niveles de carpetas.
+Ejemplo: E:\Serie\Temporada\Subcarpeta\Carpeta\Video
+
+Si tus peliculas estan a 2 o 3 niveles (lo normal), alcanza de sobra.
+
+
+================================================================================
+6. BUSQUEDA DE POSTERS
+================================================================================
+
+6.1 LIMPIEZA DEL NOMBRE ANTES DE BUSCAR
+---------------------------------------
+Los nombres de carpeta tienen ruido que estorba. El programa lo limpia.
+
+Ejemplo paso a paso:
+
+    Entrada:  🔥🔥 Matrix (1999) 🇺🇸 1080p x264 Blu-Ray
+    Paso 1:   quita emojis y simbolos  ->  Matrix (1999) 1080p x264 Blu-Ray
+    Paso 2:   quita tags tecnicos       ->  Matrix (1999)
+    Paso 3:   extrae el ano             ->  ano=1999, titulo=Matrix
+    Paso 4:   genera alias             ->  Matrix / The Matrix
+    Lo que se envia a internet: "Matrix" y "Matrix 1999"
+
+Los emojis NUNCA se envian a internet.
+
+Tags tecnicos que elimina:
+    1080p 720p 480p 4k HD FHD UHD x264 x265 h264 h265 HEVC
+    Bluray Blu-Ray BDRip BRRip WebRip Web-DL WebDL DvdRip
+    Remux Rip AAC DTS TrueHD Atmos Subs Dub Latino Espanol
+    English Eng Spa AM CAM TS TC R5 HC
+
+6.2 DETECCION DE ANIO
+---------------------
+Se busca un numero de 4 digitos entre 1888 y el ano actual+2.
+Se busca en parentesis primero: "Matrix (1999)"
+Luego al final: "Matrix 1999"
+Luego en cualquier parte: "Matrix 1999 Blu-Ray"
+
+El ano es la principal herramienta para desambiguar:
+    Matrix 1999  -> The Matrix (1999)   peso alto
+    Matrix 2021  -> Matrix (2021)        peso alto
+
+6.3 DETECCION DE TEMPORADA
+--------------------------
+Patrones reconocidos:
+
+    T1  T2  T3              abreviatura de Temporada
+    S1  S2  S03             estilo serie打通
+    Temporada 1
+    Temporada 01
+    Season 1
+    Season 01
+    T1-S1                   temporada 1, season 1
+
+Si se detecta temporada, el programa pide el POSTER DE ESA TEMPORADA,
+que es distinto del poster general de la serie.
+
+Ejemplo: One Piece T20 tiene un poster diferente a One Piece T1.
+
+Si NO hay numero de temporada, se pide el poster general de la serie o
+de la pelicula.
+
+REGLA DE TEMPORADAS:
+Solo se descarga el poster que corresponde a la carpeta de la temporada.
+La carpeta padre de la serie NO recibe poster.
+
+En Descargas\QBASWING COVERS esos posters quedan con el nombre de su
+carpeta (y la serie delante si el nombre es generico):
+
+    One Piece T1.jpg        One Piece T2.jpg
+
+    Series/One Piece/               <- sin poster
+    Series/One Piece/T1/             <- poster de la temporada 1
+    Series/One Piece/T2/             <- poster de la temporada 2
+
+6.4 ALIAS MULTIDIOMA
+--------------------
+Tu carpeta puede decir "El Ultimo Samurai" pero la base de datos lo tiene
+como "Last Samurai". El programa maneja alias para varios idiomas.
+
+Genera varios candidatos y puntua cada uno:
+
+    Candidato 1:  nombre exacto de la carpeta
+    Candidato 2:  sin tildes ni ñ (El Ultimo Samurai)
+    Candidato 3:  sin articulos iniciales (Ultimo Samurai)
+    Candidato 4:  con articulo agregado
+    Candidato 5:  con el ano (Ultimo Samurai 1992)
+    Candidato 6:  titulo oficial de otra fuente
+
+Cada fuente expone sus propios titulos alternativos:
+    TMDB           -> /movie/{id}/alternative_titles  (~40 idiomas)
+    AniList       -> titulos romaji, inglés y nativo
+    TVmaze         -> nombres alternativos de series y telenovelas
+
+6.5 PUNTUACION DE COINCIDENCIAS
+-------------------------------
+Cada resultado recibe un puntaje:
+
+    +50  el titulo coincide EXACTAMENTE con el nombre de la carpeta
+    +35  coincide ignorando mayusculas y acentos
+    +30  coincide uno de los alias en otro idioma
+    +25  el ano coincide con el del resultado
+    +15  la temporada pedida existe en ese resultado
+    +10  es del tipo que pediste (serie, pelicula, anime, telenovela)
+    -40  el ano NO coincide
+    -30  la diferencia de longitud de titulo es mayor a 6 caracteres
+    -25  no comparte ninguna palabra del titulo
+
+Umbral de aceptacion: 60 puntos.
+Por debajo de eso va a revision manual.
+
+6.6 EMPATES
+------------
+Si dos resultados quedan con el mismo puntaje y por encima del umbral,
+el programa NO adivina. Lo manda a revision manual.
+
+Es preferible que revises 3 casos a que descargue el poster equivocado
+en 50 carpetas.
+
+6.7 IDIOMA DEL POSTER
+--------------------
+Se usa el poster que exista, sin preferencia de idioma.
+TMDB indica el idioma de cada poster (iso_639_1) pero no se filtra por eso.
+
+Si hay varias opciones del mismo resultado, se elige el de MAYOR resolucion.
+
+
+================================================================================
+7. FUENTES DE DATOS
+================================================================================
+
+7.1 TMDB (The Movie Database)  - clave API gratuita
+---------------------------------------------------
+    Peliculas:   /search/movie
+    Series:      /search/tv
+    Temporadas:  /tv/{id}/season/{n}/images
+    Posters:     /movie/{id}/images  y  /tv/{id}/images
+    Alias:       /movie/{id}/alternative_titles
+
+    Es la fuente principal para peliculas, series y animes westernos.
+
+    Clave gratuita: https://www.themoviedb.org/settings/api
+    El programa la pide la primera vez y la guarda en config.json.
+
+7.2 AniList
+-----------
+    GraphQL API publica, sin clave.
+    Cubre animes de catalogo japones que TMDB no tiene.
+    Titulos en romaji, ingles y nativo.
+    Portadas de alta calidad.
+
+7.3 TVmaze
+----------
+    Sin clave. Series de TV con amplia cobertura internacional.
+    Incluye busqueda por nombre alternativo.
+
+7.4 Libros
+----------
+    Las APIs de libros no se consultan: QBASWING COVERS busca posters para
+    videos. La opcion "Novelas" significa telenovelas y consulta TMDB TV
+    y TVmaze, igual que las series.
+
+    Tampoco se consultan APIs de musica ni de manga: la biblioteca es
+    solo de video (peliculas, series, telenovelas, animes, deportes y
+    documentales), asi que solo se usan APIs de video.
+
+7.5 Google Books
+----------------
+    Google Books tampoco se consulta para buscar posters de video.
+
+7.6 MANEJO DE FALLOS
+--------------------
+Si una API falla (sin internet, caida del servidor):
+    1. Reintenta hasta 2 veces esperando 1-2 segundos
+    2. Si sigue fallando, anota la carpeta en el log
+    3. CONTINUA con las demas carpetas
+
+Si una API contesta 429 o 503 (demasiadas llamadas):
+    1. Espera lo que pida el servidor (Retry-After) y reintenta
+    2. Si insiste, esa API se pone en pausa 5 minutos
+    3. El programa sigue con las demas APIs y carpetas
+
+Las llamadas a un mismo servidor van espaciadas (1 por segundo como
+maximo en Internet Archive).
+
+Cada carpeta consulta primero las APIs de su tipo detectado; si no
+hay una respuesta clara, consulta el resto.
+
+Un fallo de internet nunca detiene el escaneo completo.
+
+
+================================================================================
+8. CACHE DE 30 DIAS
+================================================================================
+
+Si el programa busca "Matrix 1999" y guarda el resultado, las siguientes
+veces que encuentre la misma carpeta no vuelve a preguntar a internet.
+
+    Ubicacion:  cache/  (carpeta junto al programa)
+    Formato:    archivos .json con codigo sha1 del nombre
+    Validez:    30 dias
+    Al vencer:  se borra solo y se vuelve a buscar
+
+Beneficios:
+    Segundo escaneo casi instantaneo
+    No se descargan dos veces los mismos posters
+    No se satura ninguna API
+
+Lo que NO se cachea:
+    El escaneo de carpetas. Cada vez se releen los discos, para detectar
+    carpetas y archivos nuevos.
+
+
+================================================================================
+9. GALERIA WEB - EXPLORADOR ESTILO NETFLIX
+================================================================================
+
+9.1 SERVIDOR LOCAL
+------------------
+    URL:      http://localhost:8080
+    Puerto:   8080, si esta ocupado prueba 8081, 8082...
+    Escucha:  solo en 127.0.0.1 (localhost)
+
+PRIVACIDAD:
+    El servidor solo responde en tu propia PC.
+    Nadie en tu red ni en internet puede conectarse.
+    Es exactamente igual que abrir un PDF en el navegador.
+
+    Si Windows pregunta si permites Python en la red, responde NO.
+    Solo necesitas localhost.
+
+    No se instala ningun servicio.
+    No se autoarranca con Windows.
+    Se apaga al cerrar la terminal o pulsar Ctrl+C.
+
+9.2 DISENO GENERAL
+------------------
+    Encabezado con tu logo logo-qbaswing.png
+    Colores: azul #2E6FD8, rojo #D62B3A, blanco #F7F9FC
+    Tarjetas medianas de ~200px para que quepan varias por fila
+
+9.3 PESTAÑAS DE UNIDAD
+----------------------
+Una pestana por disco, con su espacio:
+
+    [ C:\  250 GB ]  [ D:\  1.2 TB ]  [ E:\  12.4 TB ]
+
+Clic en la pestana cambia de disco. No se mezclan carpetas entre unidades.
+
+9.4 NAVEGACION
+--------------
+Al abrir la galeria se muestran las unidades elegidas. Doble clic en una
+unidad para abrir su raiz; el boton "Unidades" permite volver a la lista.
+    Migas de pan:   E:\ ▸ Peliculas ▸ Accion
+    [Subir ▲]       sube un nivel, como el Explorador de Windows
+    [Unidades]      sale de la raiz actual y vuelve a la lista de unidades
+    [Volver ←]     regresa a la posicion anterior
+    Doble clic en carpeta:  entra en ella
+    Clic en la marca ✓:  selecciona la carpeta sin entrar en ella
+
+Solo se ven las unidades que elegiste al inicio.
+
+9.5 TARJETAS
+------------
+Con poster:        muestra la imagen real de la carpeta
+Con poster encontrado: muestra la imagen de internet antes de descargar
+Sin poster:       muestra un icono de carpeta gris
+Con subcarpetas:  muestra una insignia con la cantidad
+
+Bajo cada tarjeta:
+    Nombre de la carpeta
+    Ruta completa (reducida si es larga)
+    Estado:
+        "ya tiene"   en azul, no se descarga
+        "sin poster" en rojo, se puede descargar
+        "sin coincidencia" en rojo, necesita revision manual
+
+9.6 FILTROS Y BUSCADOR
+----------------------
+    [ Todas ]  [ Con poster ]  [ Sin poster ]  [ Sin coincidencia ]
+    Buscar:  [_______________]   filtra por nombre mientras escribes
+    Ordenar: A-Z  /  Z-A  /  por cantidad de subcarpetas
+
+    Contadores siempre visibles:
+        "12 carpetas  ·  8 con poster  ·  4 sin poster"
+
+9.7 MARCAR PARA DESCARGAR
+-------------------------
+    Clic en el boton ✓ de la tarjeta  ->  marca / desmarca
+    Clic derecho en la tarjeta       ->  tambien marca / desmarca
+    Boton "Seleccionar las que faltan"  ->  marca todas las sin poster
+    Boton "Limpiar seleccion"             ->  desmarca todo
+
+Las marcadas se ven con un borde azul grueso.
+
+9.8 DESCARGAR
+-------------
+Tres modos desde la galeria:
+
+    [ Descargar todo lo encontrado ]
+        Baja en lote todo lo marcado, una barra de progreso en vivo.
+
+    [ Revisar uno por uno ]
+        Muestra cada poster con botones:
+            [ a ] Aceptar    [ s ] Saltar    [ n ] Siguiente
+
+    [ Descargar seleccionados ]
+        Solo lo que marcaste a mano.
+
+Cada descarga:
+    - se guarda en Descargas\QBASWING COVERS con el nombre de la
+      carpeta escaneada (ej: Matrix (1999).jpg)
+    - si el nombre es generico (T1, Temporada 1, Episodios...) se le
+      anade la carpeta padre (ej: One Piece T1.jpg)
+    - si dos carpetas se llaman igual, la segunda queda en
+      Nombre-2.jpg, la tercera en Nombre-3.jpg...
+    - si ya estaba descargada, lo reporta y lo salta
+    - si el archivo descargado pesa menos de 15 KB, lo considera fallido
+      y borra el parcial, marcando la carpeta para revision
+    - NUNCA escribe en tus discos ni en tu telefono
+    - NUNCA sobrescribe ni borra nada existente
+
+9.9 AL TERMINAR
+---------------
+    Resumen en pantalla:
+        Porters descargados:   N
+        Ya tenian poster:      N
+        Sin coincidencia:      N
+        Fallos de descarga:    N
+
+    Se genera inventario.csv
+    Se escribe el log
+    Se abre el Explorador de Windows (o Total Commander) en
+    Descargas\QBASWING COVERS, donde estan todos los posters.
+
+
+================================================================================
+10. MANEJO DE NOMBRES RAROS, EMOJIS Y CARACTERES ESPECIALES
+================================================================================
+
+Windows permite en nombres de carpeta:
+    espacios  .  _  -  ( )  [ ]  !  '  ,  &  @  #  $  +  =  ^  ~
+    tildes y ñ  ·  todos los emojis  ·  acentos de cualquier idioma
+
+Windows PROHIBE (por eso nunca apareceran):
+    \  /  :  *  ?  "  <  >  |
+
+10.1 POR QUE NO HAY PROBLEMAS
+------------------------------
+El programa aplica 6 medidas:
+
+    1. El nombre del archivo sale del nombre de la carpeta
+       Windows no permite \ / : * ? " < > | en los nombres de carpeta,
+       asi que tampoco pueden aparecer en el archivo. Ademas el programa
+       sustituye cualquier signo raro por _, corta los nombres largos y
+       anade -2, -3... si el nombre ya esta tomado: el archivo siempre
+       tiene un nombre valido, emojis incluidos.
+
+    2. Las rutas viajan como ID numerico
+       En la web cada carpeta es "id=847". El servidor tiene un mapa
+       id -> ruta real guardado en memoria. El emoji nunca pasa por
+       una URL, que es donde se rompe.
+
+    3. Consola en UTF-8
+       sys.stdout.reconfigure(encoding="utf-8") fuerza la salida correcta
+       en la consola de Windows, que por defecto usa cp1252 y rompe los
+       acentos.
+
+    4. CSV en utf-8-sig
+       inventario.csv se guarda con BOM para que Excel muestre bien los
+       acentos y los emojis al abrirlo.
+
+    5. HTML escapado
+       Los nombres se escapan al construir el HTML de la galeria,
+       evitando inyeccion de codigo.
+
+    6. Base de datos y no rutas en disco
+       El estado de la sesion vive en memoria y en una base SQLite.
+
+10.2 CARPETAS SOLO CON EMOJIS
+------------------------------
+Si una carpeta se llama "🎬🎬🎬 2", el programa no adivina nada.
+La manda directo a "sin coincidencia" para que la renombres tu.
+
+10.3 RENOMBRAR DESDE LA GALERIA
+-------------------------------
+No se incluye esta funcion. Las carpetas se renombran a mano.
+Motivo: renombrar automaticamente es riesgoso si hay series repetidas
+y el programa no puede adivinar el nombre correcto.
+
+
+================================================================================
+11. INVENTARIO Y LOG
+================================================================================
+
+11.1 inventario.csv
+------------------
+    Columnas:
+        RutaCarpeta
+        NombreCarpeta
+        Unidad
+        Tipo
+        Temporada
+        AnioCarpeta
+        Estado              (ya_tiene / sin_poster / descargado / revision)
+        Fuente              (TMDB / AniList / TVmaze / Internet Archive)
+        TituloEncontrado
+        AnioEncontrado
+        TemporadaEncontrada
+        Puntuacion
+        UrlPoster
+        RutaPoster
+        TamanoBytes
+        Notas
+
+    Codificado en utf-8-sig para que Excel lo abra bien.
+
+11.2 qbawing_covers.log
+-----------------------
+    Registro de todo lo que hace el programa:
+        [2026-10-02 18:30:12] INFO    Escaneando D:\
+        [2026-10-02 18:34:55] OK      Descargado: C:\Users\Tu\Downloads\QBASWING COVERS\Matrix (1999).jpg
+        [2026-10-02 18:35:01] ERROR   Fallo HTTP https://api.themoviedb...
+
+    Un archivo de texto, se abre con el Bloc de notas.
+
+
+================================================================================
+12. ARCHIVOS QUE GENERA EL PROGRAMA
+================================================================================
+
+Junto al .py:
+
+    config.json         Clave de API de TMDB y ultimas opciones usadas
+    qbawing_covers.log  Registro de actividad
+    inventario.csv      Tabla completa de tu coleccion
+    qbawing_covers.db   Estado de la sesion de galeria
+    cache/              Respuestas de las APIs (30 dias)
+    logo-qbaswing.png   Tu logo (lo copias tu, opcional)
+    thumbs/             Miniaturas de la galeria (opcional)
+
+
+================================================================================
+13. REQUISITOS E INSTALACION
+================================================================================
+
+13.1 ARCHIVOS DEL PROGRAMA
+--------------------------
+Carpeta QBASWING-COVERS:
+
+    iniciar.bat              Doble clic aqui para arrancar
+    qbaswing_covers.py       Programa principal
+    i18n.py                   Diccionario ES / EN (172 claves)
+    config.json               Ajustes y clave de TMDB (ya viene escrita)
+    logo-qbaswing.png         Tu logo (opcional, si no esta funciona igual)
+    ACERCA_DE_NOSOTROS.txt    La historia, en texto plano
+    qbawing_covers.log        Se crea al empezar a trabajar
+    inventario.csv            Se crea al terminar
+    cache/                    Se crea al buscar posters
+
+
+SL O G A N
+
+    "Cada coleccion merece su portada"
+    "Every collection deserves its cover"
+
+    Aparece en:
+        - El .bat al arrancar
+        - La cabecera de la ventana de bienvenida
+        - El pie de todas las ventanas web
+
+13.2 COMO SE ARRANCA
+--------------------
+    Doble clic en  iniciar.bat
+
+    Asi de simple. No hay que escribir nada en la terminal.
+
+    El archivo iniciar.bat hace esto:
+        1. Pone la consola en UTF-8 (chcp 65001) para que los acentos,
+           las tildes y los emojis se vean bien
+        2. Le pone el nombre QBASWING COVERS v1.0 a la barra de tareas
+        3. Cambia a la carpeta del programa
+        4. Muestra la cabecera con el nombre y los creditos
+        5. Comprueba que Python este instalado
+        6. Arranca el programa
+
+    Si Python no esta instalado, el .bat lo dice y te manda a la pagina
+    de descarga, en vez de mostrar un error incomprensible.
+
+    Si el programa falla, el .bat te dice que revises
+    qbawing_covers.log para ver el detalle.
+
+    IMPORTANTE - POR QUE HAY UN .bat Y NO UN .EXE
+        El .bat necesita Python instalado, que es un programa pequeno,
+        gratuito y oficial de python.org.
+        Un .exe no lo necesita, pero pesa mucho mas y hay que generarlo
+        en una PC Windows.
+        Si mas adelante quieres el .exe, se genera con PyInstaller
+        siguiendo los pasos de la seccion 18.
+
+13.3 INSTALAR PYTHON
+--------------------
+    1. Descargalo de https://www.python.org/downloads/
+    2. Durante la instalacion MARCA la casilla "Add Python to PATH"
+       (esta en la parte de abajo de la primera ventana)
+    3. Listo. Ya puedes usar iniciar.bat
+
+    Para comprobar que quedo bien: abre el .bat. Si aparece la cabecera
+    del programa, Python esta instalado correctamente.
+
+13.4 SIN DEPENDENCIAS
+---------------------
+El programa NO necesita instalar nada mas. Usa solo la libreria estandar
+de Python.
+
+    NO requiere: requests, pillow, flask, django, ni ningun otro paquete.
+
+    Funciona en Windows 8.1, 10 y 11.
+
+    Nota de compilacion (06/10/2026): los .exe entregados se compilan con
+    Python 3.12 (32 bits) y Python 3.13 (64 bits), y esas versiones ya no
+    arrancan en Windows 7. Si hace falta un build para Windows 7, hay que
+    compilar el .exe de 32 bits con Python 3.8 de 32 bits.
+
+13.5 PRIMER ARRANQUE
+---------------------
+La primera vez el programa:
+
+    1. Muestra la ventana de bienvenida con tu logo y el slogan
+    2. Muestra el boton "Acerca de nosotros"
+    3. Eliges idioma y los tipos que quieres (con clic)
+    4. Eliges los discos a escanear (con clic)
+    5. Escanea y te muestra el resultado
+    6. Abres la galeria y descargas
+
+NINGUNA CLAVE SE PIDE EN NINGUN MOMENTO
+
+    La clave de TMDB ya viene escrita en config.json, asi que el programa
+    nunca te pide nada. Tu solo haces clic.
+
+    Si algun dia deja de funcionar la clave, el programa sigue funcionando:
+    TMDB deja de buscar peliculas, series y telenovelas. TVmaze y AniList
+    siguen aportando resultados para las categorias que soportan.
+
+
+================================================================================
+14. COLORES DE LA INTERFAZ
+================================================================================
+
+ColoresPLY derivan de la bandera cubana: azul, blanco y rojo.
+
+    Azul          #2E6FD8   Títulos de pasos, cabeceras de tabla
+    Azul claro    #5B9BEB   Barras de progreso, subtitulos
+    Azul suave    #7FB3F0   Textos de ayuda
+    Rojo          #D62B3A   Numeros de opcion, "sin poster", errores
+    Rojo suave    #E8808A   Advertencias
+    Blanco        #F7F9FC   Fondo de la galeria web
+    Gris          #B0B4BA   Textos secundarios
+
+No se usa verde en ningun lugar, porque la bandera cubana no lo tiene.
+
+En la terminal:
+    Los titulos de cada paso van en azul sobre lineas ═
+    Los numeros de las opciones van en rojo
+    Las barras de progreso van en azul claro
+
+En la galeria web:
+    Barra superior azul, fondo blanco
+    "Sin poster" en rojo
+    Tarjetas seleccionadas con borde azul grueso
+    Tu logo en la esquina superior izquierda
+
+
+================================================================================
+15. SEGURIDAD Y LIMITES
+================================================================================
+
+15.1 LO QUE EL PROGRAMA NUNCA HACE
+----------------------------------
+    - No borra ningun archivo tuyo
+    - No renombra ninguna carpeta
+    - No sobrescribe ninguna imagen existente
+    - No modifica videos
+    - No sube nada de tu PC a ningun servidor
+    - No se conecta a nada que no sean las 5 APIs publicas
+    - No se instala como servicio
+    - No se autoarranca con Windows
+    - No se abre en puertos de la red local
+
+15.2 LO QUE SI ESCRIBE
+----------------------
+    Unicamente archivos de imagen NUEVOS dentro de
+    Descargas\QBASWING COVERS, uno por cada carpeta escaneada
+    que no tenga ninguna imagen y con el nombre de esa carpeta.
+    En tus discos y en tu telefono no escribe nada.
+
+15.3 PARA DETENER TODO
+----------------------
+    Ctrl+C en cualquier momento.
+    Cerrar la terminal.
+    El servidor web se apaga solo.
+
+
+================================================================================
+16. CASOS QUE QUEDAN PARA REVISION MANUAL
+================================================================================
+
+El programa NO adivina en estos casos y los marca para que tu los revises:
+
+    - Dos resultados con el mismo puntaje
+    - Ningun resultado alcanza 60 puntos
+    - El poster descargado pesa menos de 15 KB
+    - La carpeta se llama solo con emojis o simbolos
+    - La API fallo tras los reintentos
+
+Politica: es preferente que revises 10 casos a que descargues el poster
+equivocado en 80 carpetas.
+
+
+================================================================================
+17. PRUEBA EN LA PC - QUE VERIFICAR PRIMERO
+================================================================================
+
+Cuando lo pruebes, revisa en este orden:
+
+  1. ¿Detecta bien las unidades? ¿Marca las internas correctamente?
+  2. ¿El menu se ve bien en tu consola? ¿Los acentos y colores funcionan?
+  3. ¿Encuentra las carpetas con video? ¿Cuantas encontro?
+  4. ¿Detecta las carpetas que ya tienen imagen en subcarpetas?
+  5. ¿La clave de TMDB la acepta y guarda?
+  6. ¿La galeria abre en el navegador y se ven las imagenes?
+  7. ¿Puedes navegar entre unidades y subir/bajar carpetas?
+  8. ¿Los nombres con emojis se muestran bien en la galeria?
+  9. ¿Las temporadas se detectan bien (T1, S1, Temporada 1)?
+  10. ¿Los posters que descarga son los correctos?
+  11. ¿inventario.csv se abre bien en Excel?
+  12. ¿El cache hace el segundo escaneo mas rapido?
+
+Anotar cualquier cosa que no cuadre para ajustarlo.
+
+
+================================================================================
+18. PENDIENTES PARA LA SIGUIENTE ITERACION
+================================================================================
+
+  [ ] Probar en la PC real y anotar diferencias
+  [ ] Afinar el filtro de limpieza de nombres segun tus carpetas
+  [ ] Verificar el rendimiento con tu cantidad real de TB
+  [ ] Ajustar el orden de resultados cuando hay empate
+  [ ] Confirmar tamano optimo de tarjetas en tu monitor
+  [ ] Verificar que commander se abre si lo tienes instalado
+  [ ] Empaquetar como .exe con PyInstaller si lo prefieres
+
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================

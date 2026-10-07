@@ -1,0 +1,82 @@
+════════════════════════════════════════════════════════════════
+  QBASWING COVERS v1.0
+  Cada colección merece su portada.
+  Un producto de QBASwing Designer
+════════════════════════════════════════════════════════════════
+
+CÓMO USARLO
+────────────────────────────────────────────────────────────────
+1. Haz doble clic en "iniciar.bat". Selecciona automáticamente el
+   ejecutable de 64 bits en Windows x64 y el de 32 bits en Windows x86.
+2. También puedes abrir "QBASWING COVERS.exe" directamente: es de 32
+   bits y funciona en Windows de 32 y 64 bits.
+3. Se abre una ventana de terminal (solo muestra el registro) y el
+   navegador con la primera pantalla.
+4. Elige con el mouse, en el navegador:
+      · los tipos de contenido que quieres buscar
+      · los discos que quieres escanear
+   Espera el escaneo y la búsqueda de pósters.
+5. En la galería decides qué descargar:
+      · Descargar todo lo encontrado
+      · Revisar uno por uno
+      · Marcar con el botón ✓ de cada tarjeta y descargar seleccionados
+      · También puedes usar clic derecho para marcar una tarjeta
+   Haz doble clic en una carpeta para entrar y usa el botón Subir para volver.
+6. Al terminar se crea inventario.csv y se abre la carpeta
+   Descargas\QBASWING COVERS, donde están todos los pósters.
+
+En la terminal NUNCA hay que escribir nada. Todo se elige con clic.
+
+ARCHIVOS
+────────────────────────────────────────────────────────────────
+QBASWING COVERS.exe     El programa de 32 bits (funciona también en Windows x64)
+QBASWING COVERS x64.exe El programa nativo de 64 bits
+iniciar.bat             Lanzador alternativo (hace lo mismo)
+logo-qbaswing.png       Tu logo. Puedes cambiarlo por otro con el
+                        mismo nombre y se usará el tuyo.
+i18n.py                 Todos los textos en español e inglés. Se
+                        puede editar sin tocar el programa.
+config.json             Clave de TMDB y últimas opciones usadas.
+ACERCA_DE_NOSOTROS.txt  Nuestra historia.
+LEEME.txt               Este archivo.
+
+Se crean solos cuando se usan:
+qbawing_covers.log      Registro de lo que hace el programa.
+inventario.csv          Tabla completa de tu colección (utf-8-sig).
+cache\                  Respuestas de las APIs, duran 30 días.
+qbawing_covers.db       Estado de la sesión de la galería.
+
+QUÉ NO HACE
+────────────────────────────────────────────────────────────────
+No borra, no mueve y no sobrescribe ningún archivo tuyo.
+Solo escribe imágenes nuevas en Descargas\QBASWING COVERS,
+una por cada carpeta escaneada y con el nombre de esa carpeta.
+En tus discos y en tu teléfono no escribe nada.
+
+SI ALGO FALLA
+────────────────────────────────────────────────────────────────
+Abre el símbolo del sistema en esta carpeta y escribe:
+
+      "QBASWING COVERS.exe" --check
+
+Eso revisa todo y dice qué falta, sin abrir el navegador.
+El detalle de cualquier error queda en qbawing_covers.log.
+
+REQUISITOS
+────────────────────────────────────────────────────────────────
+Windows 10 u 11.
+Funciona en PC de 32 bits y de 64 bits.
+No hay que instalar nada: es un solo archivo ejecutable.
+Conexión a internet para buscar los pósters.
+
+SI WINDOWS MUESTRA UN AVISO AL ABRIRLO
+────────────────────────────────────────────────────────────────
+La primera vez, Windows puede avisar que el programa no está
+firmado ("Windows protegió tu PC"). Es normal en programas nuevos.
+Para abrirlo: clic en "Más información" y luego en "Ejecutar de
+todas formas". Solo pasa la primera vez.
+
+════════════════════════════════════════════════════════════════
+Todos los derechos reservados © 2026
+QBASwing Designer · Freeman y Diseños
+════════════════════════════════════════════════════════════════

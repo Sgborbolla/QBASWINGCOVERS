@@ -1,0 +1,34 @@
+# UTF-8
+#
+# Informacion de version del ejecutable QBASWING COVERS.
+#
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 0, 0, 0),
+    prodvers=(1, 0, 0, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo([
+      StringTable(
+        '040a04b0',
+        [
+          StringStruct('CompanyName', 'QBASwing Designer'),
+          StringStruct('FileDescription', 'QBASWING COVERS - Caratulas para tu coleccion'),
+          StringStruct('FileVersion', '1.0.0.0'),
+          StringStruct('InternalName', 'QBASWING COVERS'),
+          StringStruct('LegalCopyright', 'Todos los derechos reservados (c) 2026 QBASwing Designer / Freeman y Diseños'),
+          StringStruct('OriginalFilename', 'QBASWING COVERS.exe'),
+          StringStruct('ProductName', 'QBASWING COVERS'),
+          StringStruct('ProductVersion', '1.0.0.0')
+        ]
+      )
+    ]),
+    VarFileInfo([VarStruct('Translation', [1034, 1200])])
+  ]
+)

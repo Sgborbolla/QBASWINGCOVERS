@@ -30,8 +30,8 @@ Que cambia con el idioma:
 Que NO cambia con el idioma:
 
     - Los nombres reales de tus carpetas
-    - El nombre del archivo que escribe (el de la carpeta escaneada,
-      siempre dentro de Descargas\QBASWING COVERS)
+    - El nombre del archivo que escribe (el mismo de la carpeta escaneada,
+      siempre dentro de esa misma carpeta)
     - Los titulos oficiales de las peliculas (vienen de las APIs)
 
 ESTRUCTURA DE ARCHIVOS
@@ -256,10 +256,9 @@ QBASWING COVERS recorre los discos de tu PC, encuentra todas las carpetas que
 contienen video y descarga el poster oficial de cada serie, pelicula, anime,
 animado o telenovela que aun no tenga imagen.
 
-No borra nada. No renombra nada. No sobrescribe nada. Solo escribe archivos
-nuevos en tu carpeta de Descargas\QBASWING COVERS, uno por cada carpeta
-escaneada que no tenga ninguna imagen, y con el mismo nombre que la carpeta.
-En tus discos no escribe nada.
+No borra nada. No renombra nada. No sobrescribe nada. Solo escribe una
+imagen nueva DENTRO de cada carpeta de video que no tenga ninguna imagen,
+con el mismo nombre que esa carpeta (ej: Matrix (1999).jpg).
 
 
 ================================================================================
@@ -484,14 +483,11 @@ REGLA DE TEMPORADAS:
 Solo se descarga el poster que corresponde a la carpeta de la temporada.
 La carpeta padre de la serie NO recibe poster.
 
-En Descargas\QBASWING COVERS esos posters quedan con el nombre de su
-carpeta (y la serie delante si el nombre es generico):
+Dentro de cada carpeta de video el poster queda con el nombre de esa
+misma carpeta:
 
-    One Piece T1.jpg        One Piece T2.jpg
-
-    Series/One Piece/               <- sin poster
-    Series/One Piece/T1/             <- poster de la temporada 1
-    Series/One Piece/T2/             <- poster de la temporada 2
+    Series/One Piece/T1/One Piece T1.jpg     <- poster de la temporada 1
+    Series/One Piece/T2/One Piece T2.jpg     <- poster de la temporada 2
 
 6.4 ALIAS MULTIDIOMA
 --------------------
@@ -728,12 +724,10 @@ Tres modos desde la galeria:
         Solo lo que marcaste a mano.
 
 Cada descarga:
-    - se guarda en Descargas\QBASWING COVERS con el nombre de la
-      carpeta escaneada (ej: Matrix (1999).jpg)
-    - si el nombre es generico (T1, Temporada 1, Episodios...) se le
-      anade la carpeta padre (ej: One Piece T1.jpg)
-    - si dos carpetas se llaman igual, la segunda queda en
-      Nombre-2.jpg, la tercera en Nombre-3.jpg...
+    - se guarda dentro de la carpeta escaneada, con el mismo nombre
+      de esa carpeta (ej: Matrix (1999).jpg)
+    - si ya existe un archivo con ese nombre, queda en
+      Nombre-2.jpg, la siguiente en Nombre-3.jpg...
     - si ya estaba descargada, lo reporta y lo salta
     - si el archivo descargado pesa menos de 15 KB, lo considera fallido
       y borra el parcial, marcando la carpeta para revision
@@ -750,8 +744,8 @@ Cada descarga:
 
     Se genera inventario.csv
     Se escribe el log
-    Se abre el Explorador de Windows (o Total Commander) en
-    Descargas\QBASWING COVERS, donde estan todos los posters.
+    Se abre el Explorador de Windows (o Total Commander) en la
+    primera carpeta descargada, con su poster dentro.
 
 
 ================================================================================
@@ -839,7 +833,7 @@ y el programa no puede adivinar el nombre correcto.
 -----------------------
     Registro de todo lo que hace el programa:
         [2026-10-02 18:30:12] INFO    Escaneando D:\
-        [2026-10-02 18:34:55] OK      Descargado: C:\Users\Tu\Downloads\QBASWING COVERS\Matrix (1999).jpg
+        [2026-10-02 18:34:55] OK      Descargado: D:\Series\Matrix (1999)\Matrix (1999).jpg
         [2026-10-02 18:35:01] ERROR   Fallo HTTP https://api.themoviedb...
 
     Un archivo de texto, se abre con el Bloc de notas.
@@ -1009,10 +1003,9 @@ En la galeria web:
 
 15.2 LO QUE SI ESCRIBE
 ----------------------
-    Unicamente archivos de imagen NUEVOS dentro de
-    Descargas\QBASWING COVERS, uno por cada carpeta escaneada
-    que no tenga ninguna imagen y con el nombre de esa carpeta.
-    En tus discos no escribe nada.
+    Unicamente archivos de imagen NUEVOS dentro de cada carpeta de video,
+    uno por cada carpeta escaneada que no tenga ninguna imagen y con el
+    mismo nombre de esa carpeta.
 
 15.3 PARA DETENER TODO
 ----------------------

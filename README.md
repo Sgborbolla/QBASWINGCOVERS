@@ -4,10 +4,10 @@ Programa de escritorio para Windows que recorre tus discos, encuentra las
 carpetas con video y descarga el póster oficial de cada serie, película,
 anime, animado o telenovela para que toda la colección tenga carátula.
 
-**Regla de oro:** no borra, no mueve y no sobrescribe nada tuyo. Los pósters
-descargados se guardan en `Descargas\QBASWING COVERS\<nombre de la carpeta>.jpg`
-(con sufijo `-2`, `-3`… si dos carpetas se llaman igual). En tus discos
-no escribe nada.
+**Regla de oro:** no borra, no mueve y no sobrescribe nada tuyo. El póster
+descargado se guarda dentro de la propia carpeta del video, con el mismo
+nombre que la carpeta (`<nombre de la carpeta>.jpg`, con sufijo `-2`, `-3`…
+si el nombre ya está ocupado).
 
 ## Uso
 
@@ -17,8 +17,8 @@ no escribe nada.
    escaneo y la búsqueda de pósters.
 3. En la galería descargas todo lo encontrado, revisas uno por uno o marcas
    con el ✓ de cada tarjeta.
-4. Al terminar se genera `inventario.csv` y se abre la carpeta
-   `Descargas\QBASWING COVERS` con todos los pósters.
+4. Al terminar se genera `inventario.csv` y se abre la primera carpeta
+   descargada, con su póster dentro.
 
 Solo escucha en `127.0.0.1` (puerto 8080): nadie desde la red puede
 conectarse.

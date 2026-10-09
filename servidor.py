@@ -45,7 +45,6 @@ HISTORIA = BASE_DIR / "ACERCA_DE_NOSOTROS.txt"
 
 MIN_POSTER_SIZE = 15 * 1024          # 9.8 - menos de 15 KB es fallo
 COVER_NAME = "cover.jpg"             # imagen previa de la carpeta origen (5.4)
-NOMBRE_DESCARGAS = "QBASWING COVERS"  # subcarpeta dentro de Descargas
 
 YA_TIENE = "ya_tiene"
 SIN_POSTER = "sin_poster"
@@ -1419,13 +1418,12 @@ def escribir_inventario():
         ruta = c["ruta"]
         info = E.resultados.get(ruta) or {}
         estado = _estado_de_carpeta(ruta) or ""
-        # Donde esta realmente el poster: en Descargas o, si era de la
-        # version antigua, cover.jpg de la propia carpeta.
+        # El poster ahora vive dentro de la propia carpeta del video y se
+        # llama igual que la carpeta. Se respeta tambien un cover.jpg previo.
         destino = ""
         archivo_desc = base.descarga_de(ruta)
-        carpeta_desc = _carpeta_descargas(crear=False)
         if archivo_desc:
-            posible = os.path.join(carpeta_desc, archivo_desc)
+            posible = os.path.join(ruta, archivo_desc)
             if os.path.isfile(posible):
                 destino = posible
         if not destino and os.path.isfile(os.path.join(ruta, COVER_NAME)):
@@ -1601,14 +1599,12 @@ def _hilo_escaneo(reanudar=False):
 def _ya_descargada(ruta):
     """
     True si el poster de esa carpeta ya esta resuelto:
-    - se descargo antes y el archivo sigue en Descargas\\QBASWING COVERS
+    - se descargo antes y el archivo sigue dentro de la carpeta
     - o la carpeta origen ya tiene su cover.jpg (versiones antiguas)
     """
     archivo = base.descarga_de(ruta)
-    if archivo:
-        carpeta = _carpeta_descargas(crear=False)
-        if os.path.isfile(os.path.join(carpeta, archivo)):
-            return True
+    if archivo and os.path.isfile(os.path.join(ruta, archivo)):
+        return True
     try:
         return os.path.isfile(os.path.join(ruta, COVER_NAME))
     except Exception:
@@ -1750,115 +1746,49 @@ def _hilo_busqueda():
 # --------------------------------------------------------------------------
 # 9.8 Descarga de posters
 #
-# El poster NO se escribe en la carpeta del video: se guarda en
-#   Descargas\QBASWING COVERS\<nombre de la carpeta>.jpg
-# con -2, -3... si dos carpetas se llaman igual. En el origen
-# no se escribe NADA.
+# El poster se guarda dentro de la propia carpeta del video, con el
+# mismo nombre que la carpeta (ej: Matrix (1999).jpg); con -2, -3...
+# si el nombre ya esta ocupado. El origen nunca se sobrescribe.
 # --------------------------------------------------------------------------
-
-_GENERICO_DESCARGA = re.compile(
-    r"^(t\s?\d{1,3}|temporada\s?\d{1,3}|season\s?\d{1,3}|"
-    r"cap\w*\s?\d{1,3}|ep\w*\s?\d{1,3}|"
-    r"temporada|season|capitulo|capitulos|episodio|episodios|"
-    r"especiales|specials|extras?|bonus|ovas?|"
-    r"peliculas|pelis|series|anime|documentales)$")
-
-
-def _raiz_descargas():
-    """
-    Carpeta Descargas del usuario. La busca en el registro de Windows,
-    asi que aguanta carpetas renombradas ("Descargas") o en otro disco.
-    Si no, usa ~/Downloads y, en ultimo caso, la carpeta del usuario.
-    """
-    try:
-        import winreg
-        k = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders")
-        valor, _tipo = winreg.QueryValueEx(
-            k, "{374DE290-123F-4565-9164-39C4925E4678}")
-        winreg.CloseKey(k)
-        if isinstance(valor, str) and valor and os.path.isdir(valor):
-            return valor
-    except Exception:
-        pass
-    casa = os.path.expanduser("~")
-    descargas = os.path.join(casa, "Downloads")
-    if os.path.isdir(descargas):
-        return descargas
-    return casa
-
-
-def _carpeta_descargas(crear=True):
-    """Descargas\\QBASWING COVERS. Con crear=False solo calcula la ruta."""
-    carpeta = os.path.join(_raiz_descargas(), NOMBRE_DESCARGAS)
-    if not crear:
-        return carpeta
-    try:
-        os.makedirs(carpeta, exist_ok=True)
-        return carpeta
-    except OSError:
-        _log("No se pudo crear la carpeta de descargas: %s" % carpeta, "ERROR")
-        return None
-
-
-def _padre_de(ruta):
-    """Nombre de la carpeta padre, para nombrar carpetas genericas."""
-    try:
-        return os.path.basename(os.path.dirname(ruta))
-    except Exception:
-        return ""
-
-
-def _nombre_descarga(ruta, nombre):
-    """
-    Nombre base del archivo en Descargas: el mismo de la carpeta.
-    Si el nombre es generico (T1, Temporada 1, Episodios...) se le
-    anade la carpeta padre, para que se vea de que serie es.
-    """
-    texto = (nombre or "").strip() or "poster"
-    if _GENERICO_DESCARGA.match(post.quitar_acentos(texto).lower()):
-        padre = (_padre_de(ruta) or "").strip()
-        if padre:
-            texto = "%s %s" % (padre, texto)
-    # Windows prohibe estos signos en los nombres de archivo; una carpeta
-    # de Windows no los puede tener, pero aqui se limpian por si acaso.
-    for signo in '\\/:*?"<>|':
-        texto = texto.replace(signo, "_")
-    texto = texto.strip().rstrip(". ")
-    if len(texto) > 200:
-        texto = texto[:200].rstrip(". ")
-    return texto or "poster"
 
 
 def _destino_descarga(ruta, nombre):
     """
-    Ruta final del poster de ESTA carpeta. Reutiliza el nombre que ya
-    le toco y, si esta libre, busca el primero libre: base.jpg,
-    base-2.jpg, base-3.jpg... Devuelve None si Descargas no funciona.
+    Guarda el poster con el MISMO NOMBRE que la carpeta del video.
+    Ejemplo: si la carpeta se llama "Matrix 1999", el archivo será "Matrix 1999.jpg"
     """
-    carpeta = _carpeta_descargas()
-    if not carpeta:
-        return None
-    previo = base.descarga_de(ruta)
-    if previo:
-        anterior = os.path.join(carpeta, previo)
-        if os.path.isfile(anterior):
-            return anterior
-    nombre_base = _nombre_descarga(ruta, nombre)
-    archivo = nombre_base + ".jpg"
+    # Obtener el nombre de la carpeta
+    nombre_carpeta = os.path.basename(ruta)
+    
+    # Si no se pudo obtener el nombre, usar el parámetro nombre
+    if not nombre_carpeta:
+        nombre_carpeta = nombre or "poster"
+    
+    # Limpiar caracteres inválidos para nombres de archivo en Windows
+    for signo in '/:*?"<>|':
+        nombre_carpeta = nombre_carpeta.replace(signo, "_")
+    
+    nombre_carpeta = nombre_carpeta.strip()
+    if len(nombre_carpeta) > 200:
+        nombre_carpeta = nombre_carpeta[:200]
+    
+    # Crear la ruta del archivo con el nombre de la carpeta
+    archivo = os.path.join(ruta, nombre_carpeta + ".jpg")
+    
+    # Si ya existe, agregar un número para no sobrescribir
     contador = 2
-    while os.path.exists(os.path.join(carpeta, archivo)):
-        archivo = "%s-%d.jpg" % (nombre_base, contador)
+    while os.path.exists(archivo):
+        archivo = os.path.join(ruta, "%s-%d.jpg" % (nombre_carpeta, contador))
         contador += 1
-    return os.path.join(carpeta, archivo)
+    
+    return archivo
 
 
 def _descargar_una(c):
     """
-    Descarga el poster de UNA carpeta en Descargas\\QBASWING COVERS,
-    con el nombre de la carpeta. El origen no se toca nunca.
-    Devuelve (estado, tamano). Nunca sobrescribe ni borra nada.
+    Descarga el poster de UNA carpeta y lo guarda DENTRO de esa misma
+    carpeta, con el nombre de la carpeta. Devuelve (estado, tamano).
+    Nunca sobrescribe: si el nombre esta ocupado usa -2, -3...
     """
     ruta = c["ruta"]
 
@@ -1971,9 +1901,9 @@ def _hilo_descarga(lista, motivo):
              % (motivo, resumen["descargados"], resumen["ya_tenian"],
                 resumen["sin_coincidencia"], resumen["fallos"]))
 
-        # 11.3 Abrir la carpeta de Descargas, donde estan los posters.
+        # 11.3 Abrir la primera carpeta descargada, donde quedo su poster.
         if primera:
-            _abrir_carpeta(_carpeta_descargas() or primera)
+            _abrir_carpeta(primera)
     except Exception as exc:
         # Un fallo sin registrar dejaba la pantalla de descarga clavada
         # sin resumen: el usuario lo ve como "no descarga nada".
@@ -2462,11 +2392,10 @@ class Manejador(BaseHTTPRequestHandler):
             if not ruta_carpeta:
                 self._enviar(b"", "image/jpeg", 404)
                 return
-            # Primero: lo que se descargo a Descargas\QBASWING COVERS.
+            # El poster se guarda dentro de la propia carpeta del video.
             archivo = base.descarga_de(ruta_carpeta)
             if archivo:
-                posible = os.path.join(
-                    _carpeta_descargas(crear=False), archivo)
+                posible = os.path.join(ruta_carpeta, archivo)
                 if os.path.isfile(posible):
                     self._enviar_archivo(posible)
                     return

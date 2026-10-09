@@ -22,8 +22,8 @@ CÓMO USARLO
       · Marcar con el botón ✓ de cada tarjeta y descargar seleccionados
       · También puedes usar clic derecho para marcar una tarjeta
    Haz doble clic en una carpeta para entrar y usa el botón Subir para volver.
-6. Al terminar se crea inventario.csv y se abre la carpeta
-   Descargas\QBASWING COVERS, donde están todos los pósters.
+6. Al terminar se crea inventario.csv y se abre la primera carpeta
+   descargada, con su póster dentro (con el nombre de la carpeta).
 
 En la terminal NUNCA hay que escribir nada. Todo se elige con clic.
 
@@ -49,9 +49,8 @@ qbawing_covers.db       Estado de la sesión de la galería.
 QUÉ NO HACE
 ────────────────────────────────────────────────────────────────
 No borra, no mueve y no sobrescribe ningún archivo tuyo.
-Solo escribe imágenes nuevas en Descargas\QBASWING COVERS,
-una por cada carpeta escaneada y con el nombre de esa carpeta.
-En tus discos no escribe nada.
+Solo escribe una imagen nueva dentro de cada carpeta escaneada,
+una por cada carpeta con video y con el nombre de esa carpeta.
 
 SI ALGO FALLA
 ────────────────────────────────────────────────────────────────

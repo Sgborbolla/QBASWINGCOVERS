@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Verifica la descarga a Descargas\\QBASWING COVERS: escritura con el
-nombre de la carpeta, rechazo por tamano y -- lo mas importante -- que
-NUNCA escribe en el origen, NUNCA sobrescribe ni borra un archivo
-existente ni deja restos de parcial."""
+"""Verifica la descarga del poster DENTRO de la carpeta del video:
+escritura con el nombre de la carpeta, rechazo por tamano y -- lo mas
+importante -- que NUNCA sobrescribe ni borra un archivo existente ni
+deja restos de parcial."""
 import os
 import sys
 import shutil
@@ -49,22 +49,11 @@ url = "http://127.0.0.1:%d" % puerto
 
 raiz = tempfile.mkdtemp(prefix="qbawing_desc_")
 
-# Nada de lo real se toca: inventario, base de estado, carpeta de
-# Descargas y el recuerdo de lo descargado apuntan a la carpeta
-# temporal, que se borra al salir.
+# Nada de lo real se toca: inventario, base de estado y el recuerdo de lo
+# descargado apuntan a la carpeta temporal, que se borra al salir.
 S.INVENTARIO = Path(os.path.join(raiz, "inventario.csv"))
 S.DB_FILE = Path(os.path.join(raiz, "qbawing_covers.db"))
-DESCARGAS = os.path.join(raiz, "Descargas")
 _mapa = {}
-
-
-def _carpeta_descargas_mentira(crear=True):
-    if crear:
-        try:
-            os.makedirs(DESCARGAS, exist_ok=True)
-        except OSError:
-            return None
-    return DESCARGAS
 
 
 def _registrar_mentira(ruta, archivo):
@@ -72,7 +61,6 @@ def _registrar_mentira(ruta, archivo):
     return True
 
 
-S._carpeta_descargas = _carpeta_descargas_mentira
 S.base.registrar_descarga = _registrar_mentira
 S.base.descarga_de = lambda ruta: _mapa.get(ruta, "")
 S._abrir_carpeta = lambda _ruta: None
@@ -102,36 +90,48 @@ def nueva(nombre, url_poster, ruta_rel=None):
     return c
 
 
-def en_descargas(nombre):
-    return os.path.join(DESCARGAS, nombre)
+def en_carpeta(c, nombre):
+    return os.path.join(c["ruta"], nombre)
 
 
 def vacia(c):
-    """La carpeta de origen no tiene NADA: asi tiene que quedar siempre."""
+    """La carpeta de origen no tiene NINGUN archivo nuevo."""
     return not os.listdir(c["ruta"])
 
 
+def recoger_parciales(d):
+    total = []
+    for nombre in os.listdir(d):
+        hijo = os.path.join(d, nombre)
+        if os.path.isdir(hijo):
+            total += recoger_parciales(hijo)
+        elif nombre.endswith(".qbawing-parcial"):
+            total.append(hijo)
+    return total
+
+
 try:
-    # 1. descarga normal: acaba en Descargas con el nombre de la carpeta
-    #    y el origen NO recibe ni un byte.
+    # 1. descarga normal: acaba DENTRO de la carpeta con su mismo nombre.
     c1 = nueva("Normal", url + "/ok")
     estado, tam = S._descargar_una(c1)
-    destino = en_descargas("Normal.jpg")
-    check("descarga en Descargas con el nombre de la carpeta",
+    destino = en_carpeta(c1, "Normal.jpg")
+    check("descarga dentro de la carpeta con su mismo nombre",
           estado == "ok" and os.path.isfile(destino) and tam == len(PNG_OK),
           (estado, tam))
     check("contenido intacto", open(destino, "rb").read() == PNG_OK)
-    check("el origen queda vacio", vacia(c1))
     check("queda registrado en la base",
           S.base.descarga_de(c1["ruta"]) == "Normal.jpg", estado)
 
     # 2. nunca sobrescribe: se tacha el archivo descargado y se reintenta.
+    #    Al estar el nombre ocupado, el nuevo queda como -2 y el tuyo se salva.
     marca = b"NO TOCAR"
     with open(destino, "wb") as f:
         f.write(marca)
     estado, tam = S._descargar_una(c1)
-    check("no sobrescribe en Descargas", estado == "ya_existe"
-          and open(destino, "rb").read() == marca, estado)
+    check("no sobrescribe: respeta tu archivo y usa -2",
+          estado == "ok"
+          and open(destino, "rb").read() == marca
+          and os.path.isfile(en_carpeta(c1, "Normal-2.jpg")), estado)
 
     # 3. imagen con otro nombre ya presente en el origen -> se respeta.
     c2 = nueva("Con Imagen", url + "/ok")
@@ -141,28 +141,23 @@ try:
         f.write(b"imagen del usuario" * 900)
     estado, _ = S._descargar_una(c2)
     check("respeta otra imagen", estado == "ya_tiene_imagen"
-          and not os.path.exists(en_descargas("Con Imagen.jpg"))
-          and os.path.isfile(os.path.join(c2["ruta"], "poster.png")),
-          estado)
+          and os.listdir(c2["ruta"]) == ["poster.png"], estado)
 
     # 4. poster de menos de 15 KB -> fallo, sin dejar basura.
     c3 = nueva("Chico", url + "/chico")
     estado, tam = S._descargar_una(c3)
-    check("rechaza < 15 KB", estado == "fallo_pequeno"
-          and not os.path.exists(en_descargas("Chico.jpg")) and vacia(c3),
+    check("rechaza < 15 KB", estado == "fallo_pequeno" and vacia(c3),
           (estado, tam))
 
     # 5. sin coincidencia -> sin_poster, sin escribir nada.
     c4 = nueva("Sin match", None)
     estado, _ = S._descargar_una(c4)
-    check("sin poster", estado == "sin_poster" and vacia(c4)
-          and not os.path.exists(en_descargas("Sin match.jpg")), estado)
+    check("sin poster", estado == "sin_poster" and vacia(c4), estado)
 
     # 6. fallo de red -> no rompe y no deja archivos.
     c5 = nueva("Caida", url + "/no-existe")
     estado, _ = S._descargar_una(c5)
-    check("fallo de red controlado", estado == "fallo" and vacia(c5)
-          and not os.path.exists(en_descargas("Caida.jpg")), estado)
+    check("fallo de red controlado", estado == "fallo" and vacia(c5), estado)
 
     # 7. resumen completo con el hilo de descarga.
     c6 = nueva("Lote", url + "/ok")
@@ -181,50 +176,44 @@ try:
     seleccion = [c for c in E.carpetas if c["ruta"] in E.marcadas]
     S._hilo_descarga(seleccion, "seleccion")
     check("poster guardado solo en la seleccionada",
-          os.path.isfile(en_descargas("Seleccionada.jpg"))
-          and open(en_descargas("Seleccionada.jpg"), "rb").read() == PNG_OK
-          and not os.path.exists(en_descargas("Sin Marcar.jpg"))
-          and vacia(c7) and vacia(c8))
+          os.path.isfile(en_carpeta(c7, "Seleccionada.jpg"))
+          and open(en_carpeta(c7, "Seleccionada.jpg"), "rb").read() == PNG_OK
+          and vacia(c8))
 
-    # 9. Dos carpetas con el mismo nombre -> la segunda lleva -2.
+    # 9. Dos carpetas con el mismo nombre: cada una guarda el suyo en su
+    #    propia carpeta, sin colisiones (-2 no hace falta).
     c9 = nueva("Mismo", url + "/ok")
     c10 = nueva("Mismo", url + "/ok", ruta_rel=os.path.join("doble", "Mismo"))
     S._descargar_una(c9)
     S._descargar_una(c10)
-    check("nombres repetidos con -2",
-          os.path.isfile(en_descargas("Mismo.jpg"))
-          and os.path.isfile(en_descargas("Mismo-2.jpg"))
+    check("mismo nombre en cada carpeta",
+          os.path.isfile(en_carpeta(c9, "Mismo.jpg"))
+          and os.path.isfile(en_carpeta(c10, "Mismo.jpg"))
           and S.base.descarga_de(c9["ruta"]) == "Mismo.jpg"
-          and S.base.descarga_de(c10["ruta"]) == "Mismo-2.jpg")
+          and S.base.descarga_de(c10["ruta"]) == "Mismo.jpg")
 
     # 10. El programa recuerda lo descargado entre sesiones.
-    check("recuerda lo ya descargado", S._ya_descargada(c1["ruta"]))
+    check("recuerda lo ya descargado", S._ya_descargada(c6["ruta"]))
     #    Si borras el archivo, vuelve a pendiente y se rehace con el
     #    MISMO nombre (no acaba en un -2 fantasma).
-    os.remove(destino)
+    destino_lote = en_carpeta(c6, "Lote.jpg")
+    os.remove(destino_lote)
     check("al borrarlo vuelve a ser pendiente",
-          not S._ya_descargada(c1["ruta"]))
-    estado, _ = S._descargar_una(c1)
-    check("rehace con el mismo nombre", estado == "ok"
-          and os.path.isfile(destino)
-          and S.base.descarga_de(c1["ruta"]) == "Normal.jpg", estado)
+          not S._ya_descargada(c6["ruta"]))
+    estado, _ = S._descargar_una(c6)
+    check("rehace con su mismo nombre", estado == "ok"
+          and os.path.isfile(destino_lote)
+          and S.base.descarga_de(c6["ruta"]) == "Lote.jpg", estado)
 
-    # 11. Carpeta generica (T1): el nombre lleva la serie delante.
+    # 11. Nombre generico (T1): se usa el nombre de la carpeta tal cual.
     c11 = nueva("T1", url + "/ok",
                 ruta_rel=os.path.join("Series", "One Piece", "T1"))
     estado, _ = S._descargar_una(c11)
-    check("carpeta generica lleva la serie",
-          estado == "ok" and os.path.isfile(en_descargas("One Piece T1.jpg"))
-          and vacia(c11), estado)
+    check("usa el nombre de la carpeta tal cual", estado == "ok"
+          and os.path.isfile(en_carpeta(c11, "T1.jpg")), estado)
 
-    # 12. Descargas contiene exactamente lo esperado, sin restos.
-    esperado = {"Normal.jpg", "Lote.jpg", "Seleccionada.jpg", "Mismo.jpg",
-                "Mismo-2.jpg", "One Piece T1.jpg"}
-    existentes = set(os.listdir(DESCARGAS))
-    check("Descargas limpia y completa", existentes == esperado,
-          existentes ^ esperado)
-    check("sin restos de parcial",
-          not [f for f in existentes if f.endswith(".qbawing-parcial")])
+    # 12. Ningun resto de parcial en todo el arbol.
+    check("sin restos de parcial", not recoger_parciales(raiz))
 
 finally:
     srv.shutdown()

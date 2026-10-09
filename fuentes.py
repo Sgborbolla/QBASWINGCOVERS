@@ -15,6 +15,7 @@ import json
 import time
 import socket
 import hashlib
+import ipaddress
 import threading
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -75,6 +76,23 @@ def _host_de(url):
         return url.split("/")[2].lower().split(":")[0]
     except Exception:
         return ""
+
+
+def _es_ip_o_local(host):
+    """
+    True si el host es una IP (127.0.0.1, 192.168.x...) o localhost.
+    Para esos no tiene sentido probar primero HTTPS: son servidores
+    locales o de red que responden solo por http.
+    """
+    if not host:
+        return True
+    if host.lower() in ("localhost", "localhost."):
+        return True
+    try:
+        ipaddress.ip_address(host)
+        return True
+    except ValueError:
+        return False
 
 
 def _host_en_pausa(host):
@@ -262,12 +280,14 @@ def descargar_binario(url):
     """
     Descarga la imagen. Devuelve los bytes, o None.
     Se prefiere HTTPS; si el servidor no lo soporta se intenta la URL original.
+    En IPs y localhost se usa la URL tal cual: probar HTTPS primero solo
+    alarga la espera contra servidores que responden solo por http.
     """
     if not url:
         return None
 
     candidatos = [url]
-    if url.startswith("http://"):
+    if url.startswith("http://") and not _es_ip_o_local(_host_de(url)):
         candidatos.insert(0, "https://" + url[len("http://"):])
 
     host = _host_de(url)
